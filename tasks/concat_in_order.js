@@ -29,7 +29,10 @@ module.exports = function (grunt) {
         },
         extractDeclared: function (filepath, filecontent) {
             return this.getMatches(/declare\(['"]([^'"]+)['"]/g, filecontent);
-        }
+        },
+        onDependencyTreeCreated: function (fileSet, dependencyTree) {
+          return;
+        },
     }, getExistingFiles = function (files) {
         return files.src.filter(function (filepath) {
             // Warn on and remove invalid source files (if nonull was set).
@@ -160,6 +163,10 @@ module.exports = function (grunt) {
             grunt.file.write(fileSet.dest, ordered.map(function (item) {
                 return item.content;
             }).join(EOL));
+
+            options.onDependencyTreeCreated(fileSet, ordered.map(function (dep) {
+              return dep.file;
+            }));
 
             grunt.log.writeln('File "' + fileSet.dest + '" created.');
         });
